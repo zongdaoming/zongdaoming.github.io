@@ -4,8 +4,10 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="Hello World, DorMin">
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex">
+    <meta name="keywords" content="Conjugate, DorMin">
+    <meta name="description" content="共轭分布
+共轭(conjugate) : 后验和先验是同一种分布。
+泊松分布-伽马分布模型假设有一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于泊松分布，即 $x _ { i } \sim \ope">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +15,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Hello World | DorMin</title>
+    <title>Conjugate | DorMin</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -260,13 +262,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        Hello World
+                        Conjugate
                     </div>
                 </div>
             </div>
@@ -356,12 +358,29 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                          <div class="article-tag">
-                            <span class="chip bg-color">无标签</span>
-                          </div>
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ML/" target="_blank">
+                                <span class="chip bg-color">ML</span>
+                            </a>
+                        
+                            <a href="/tags/PGM/" target="_blank">
+                                <span class="chip bg-color">PGM</span>
+                            </a>
+                        
+                    </div>
                     
                 </div>
                 <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/机器学习基础/" class="post-category" target="_blank">
+                                机器学习基础
+                            </a>
+                        
+                    </div>
                     
                 </div>
             </div>
@@ -369,21 +388,21 @@
             <div class="post-info">
                 <div class="post-date info-break-policy">
                     <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2019-06-21
+                    2019-06-20
                 </div>
 
                 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        73
+                        772
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        1 分
+                        3 分
                     </div>
                     
                 
@@ -399,15 +418,22 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><pre class=" language-bash"><code class="language-bash">$ hexo new <span class="token string">"My New Post"</span></code></pre>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><pre class=" language-bash"><code class="language-bash">$ hexo server</code></pre>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><pre class=" language-bash"><code class="language-bash">$ hexo generate</code></pre>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><pre class=" language-bash"><code class="language-bash">$ hexo deploy</code></pre>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+                <h2 id="共轭分布"><a href="#共轭分布" class="headerlink" title="共轭分布"></a>共轭分布</h2><hr>
+<h3 id="共轭-conjugate-后验和先验是同一种分布。"><a href="#共轭-conjugate-后验和先验是同一种分布。" class="headerlink" title="共轭(conjugate) : 后验和先验是同一种分布。"></a>共轭(conjugate) : 后验和先验是同一种分布。</h3><hr>
+<h3 id="泊松分布-伽马分布模型"><a href="#泊松分布-伽马分布模型" class="headerlink" title="泊松分布-伽马分布模型"></a>泊松分布-伽马分布模型</h3><p>假设有一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于泊松分布，即 $x _ { i } \sim \operatorname { Poisson } ( \lambda )$ ，则<br>$$<br>p \left( x _ { i } | \lambda \right) = \frac { e ^ { - \lambda } \lambda ^ { x _ { i } } } { x _ { i } ! }<br>$$</p>
+<p>从而，可以很轻松地写出相应的<strong>似然（likelihood）</strong>：
+$$\mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \lambda \right) = \prod _ { i = 1 } ^ { n } \frac { e ^ { - \lambda } \lambda ^ { x _ { i } } } { x _ { i } ! } = \frac { e ^ { - n \lambda } \lambda \sum _ { i = 1 } ^ { n } x _ { i } } { \prod _ { i = 1 } ^ { n } x _ { i } ! }$$</p>
+<p>其中，$\lambda&gt;0$ 是一个未知的参数，进一步假设其服从伽马分布，<strong>给定先验 ，则$\lambda \sim \operatorname { Gamma } ( \alpha , \beta )$</strong>，则<br>$$ p ( \lambda | \alpha , \beta ) = \frac { \beta ^ { \alpha } } { \Gamma ( \alpha ) } e ^ { - \beta \lambda } \lambda ^ { \alpha - 1 }$$</p>
+<p>其中，需要说明的是，伽马分布中的 $\alpha$ 表示形状（shape）参数， $\beta$ 表示比率（rate）参数， $\Gamma(\cdot)$ 表示伽马函数。<br>在贝叶斯分析中，有了先验和似然，则<strong>poster $\propto$ prior $\times$ likelihood</strong>,也就是所谓的后验分布正比于先验和似然的乘积。</p>
+<p>即
+$$\begin{aligned}\left( \lambda | x _ { 1 } , \ldots , x _ { n } , \alpha , \beta \right) &amp;\propto p ( \lambda | \alpha , \beta ) \mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \lambda \right) \ &amp; \propto e ^ { - ( \beta + n ) \lambda } \lambda ^ { \alpha + \sum _ { i = 1 } ^ { n } x _ { i } - 1 } \ &amp; \Rightarrow \left( \lambda | x _ { 1 } , \ldots , x _ { n } , \alpha , \beta \right) \sim \operatorname { Gamma } \left( \alpha + \sum _ { i = 1 } ^ { n } x _ { i } , \beta + n \right)\end{aligned}$$</p>
+<p>因此，假设一组观测样本独立同分布于参数为$\lambda$的泊松分布，则伽马分布是参数 $ 的共轭先验（conjugate prior）。</p>
+<hr>
+<h3 id="正态分布-正态分布模型"><a href="#正态分布-正态分布模型" class="headerlink" title="正态分布-正态分布模型"></a>正态分布-正态分布模型</h3><p>假设一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于正态分布，即 $x_{i} \sim \mathcal{N}(\mu,\sigma^{2})$ ，其中， $\bm{\mu}$是未知的，$\bm{\sigma^{2}}$ 是已知的（不需要假设先验），则似然为:</p>
+<p>$$\begin{aligned}\mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \mu \right) &amp;= \prod _ { i = 1 } ^ { n } \frac { 1 } { \sqrt { 2 \pi } \sigma } \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right}\&amp; \propto \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right} \end{aligned}$$</p>
+<p>进一步，假设<strong>参数</strong>$\bm{\mu}$的先验为$\bm{\mu} \sim \mathcal{N}(\mu_{0},\sigma_{0}^{2})$ ，即<br>$$p \left( \mu | \mu _ { 0 } , \sigma _ { 0 } \right) = \frac { 1 } { \sqrt { 2 \pi } \sigma _ { 0 } } \exp \left{ - \frac { 1 } { 2 \sigma _ { 0 } ^ { 2 } } \left( \mu - \mu _ { 0 } \right) ^ { 2 } \right}$$<br>从而，可以推导出后验为</p>
+<p>$$\begin{aligned}<br>p \left( \mu | x _ { 1 } , \ldots , x _ { n } , \mu _ { 0 } , \sigma _ { 0 } \right) &amp; \propto p \left( \mu | \mu _ { 0 } , \sigma _ { 0 } \right) \mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \mu \right) \ &amp; \propto \exp \left{ - \frac { 1 } { 2 } \left[ \frac { 1 } { \sigma ^ { 2 } } \sum _ { i = 1 } ^ { n } \left( x _ { i } - \mu \right) ^ { 2 } + \frac { 1 } { \sigma _ { 0 } ^ { 2 } } \left( \mu - \mu _ { 0 } \right) ^ { 2 } \right] \right} \ &amp; \propto \exp \left{ - \frac { 1 } { 2 } \left( \frac { 1 } { \sigma _ { 0 } ^ { 2 } } + \frac { n } { \sigma ^ { 2 } } \right) \left( \mu - \frac { \frac { \mu _ { 0 } } { \sigma _ { 0 } ^ { 2 } } + \frac { n \overline { x } } { \sigma ^ { 2 } } } { \frac { 1 } { \sigma _ { 0 } ^ { 2 } } + \frac { n } { \sigma ^ { 2 } } } \right) ^ { 2 } \right}<br>\end{aligned}$$</p>
+<p>因此，后验也服从正态分布，一般而言，有了先验和似然，计算后验能够方便我们实现变分推断和Gibbs采样等。</p>
 
             </div>
             <hr/>
@@ -555,7 +581,7 @@
                     </span>
                     <a href="https://zongdaoming.github.io" class="b-link-green">DorMin</a>
                     <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
-                    <a href="/2019/06/21/hello-world/" class="b-link-green">Hello World</a>
+                    <a href="/2019/06/20/ji-qi-xue-xi-ji-chu/conjugate/" class="b-link-green">Conjugate</a>
                 </p>
             </div>
         </div>
@@ -577,7 +603,7 @@
         repo: 'zongdaoming.github.io',
         owner: 'zongdaoming',
         admin: "zongdaoming",
-        id: '2019-06-21T17-57-57',
+        id: '2019-06-20T11-36-35',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -598,10 +624,9 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
-            </div>
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
                 <a href="/2019/06/21/hello-world/">
                     <div class="card-image">
@@ -615,9 +640,9 @@
                 <div class="card-content article-content">
                     <div class="summary">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex</div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-06-21
-                            </span>
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-06-21
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-user fa-fw"></i>
@@ -626,7 +651,6 @@
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -637,29 +661,34 @@
                 下一篇&nbsp;<i class="fa fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2019/06/20/ji-qi-xue-xi-ji-chu/conjugate/">
+                <a href="/2018/09/28/qian-duan/hexo-bo-ke-zhu-ti-zhi-hexo-theme-matery-de-jie-shao/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="Conjugate">
+                        <img src="/medias/featureimages/9.jpg" class="responsive-img" alt="Hexo博客主题之hexo-theme-matery的介绍">
                         
-                        <span class="card-title">Conjugate</span>
+                        <span class="card-title">Hexo博客主题之hexo-theme-matery的介绍</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
-                    <div class="summary">共轭分布
-共轭(conjugate) : 后验和先验是同一种分布。
-泊松分布-伽马分布模型假设有一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于泊松分布，即 $x _ { i } \sim \ope</div>
+                    <div class="summary">English Document | 演示示例 | QQ交流群:926552981
+
+这是一个采用Material Design和响应式设计的 Hexo 博客主题。
+
+特性
+简单漂亮，文章内容美观易读
+Material Design 设计
+</div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-06-20
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2018-09-28
                             </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/机器学习基础/" class="post-category" target="_blank">
-                                    机器学习基础
+                            <a href="/categories/前端/" class="post-category" target="_blank">
+                                    前端
                                 </a>
                             
                             
@@ -669,12 +698,12 @@
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/ML/" target="_blank">
-                        <span class="chip bg-color">ML</span>
+                    <a href="/tags/Hexo/" target="_blank">
+                        <span class="chip bg-color">Hexo</span>
                     </a>
                     
-                    <a href="/tags/PGM/" target="_blank">
-                        <span class="chip bg-color">PGM</span>
+                    <a href="/tags/hexo-theme-matery/" target="_blank">
+                        <span class="chip bg-color">hexo-theme-matery</span>
                     </a>
                     
                 </div>
@@ -775,6 +804,13 @@
 
 </main>
 
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+    MathJax.Hub.Config({
+        tex2jax: {inlineMath: [['$', '$'], ['\(', '\)']]}
+    });
+</script>
 
 <footer class="page-footer bg-color">
     <div class="container row center-align">
