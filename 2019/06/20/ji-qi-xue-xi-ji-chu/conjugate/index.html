@@ -395,14 +395,14 @@
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        571
+                        769
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        2 分
+                        3 分
                     </div>
                     
                 
@@ -429,7 +429,8 @@ $$\mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \lambda \right) = \prod
 $$\begin{aligned}\left( \lambda | x _ { 1 } , \ldots , x _ { n } , \alpha , \beta \right) &amp;\propto p ( \lambda | \alpha , \beta ) \mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \lambda \right) \\ &amp; \propto e ^ { - ( \beta + n ) \lambda } \lambda ^ { \alpha + \sum _ { i = 1 } ^ { n } x _ { i } - 1 } \\ &amp; \Rightarrow \left( \lambda | x _ { 1 } , \ldots , x _ { n } , \alpha , \beta \right) \sim \operatorname { Gamma } \left( \alpha + \sum _ { i = 1 } ^ { n } x _ { i } , \beta + n \right)\end{aligned}$$</p>
 <p>因此，假设一组观测样本独立同分布于参数为$\lambda$的泊松分布，则伽马分布是参数$\lambda$的共轭先验（conjugate prior）。</p>
 <hr>
-<h3 id="正态分布-正态分布模型"><a href="#正态分布-正态分布模型" class="headerlink" title="正态分布-正态分布模型"></a>正态分布-正态分布模型</h3><p>假设一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于正态分布，即 $x_{i} \sim \mathcal{N}(\mu,\sigma^{2})$ ，其中， $\boldsymbol{\mu}$是未知的，$\boldsymbol{\sigma^{2}}$ 是已知的（不需要假设先验），则似然为:<br>$$\begin{aligned} \mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \mu \right) &amp; = \prod _ { i = 1 } ^ { n } \frac { 1 } { \sqrt { 2 \pi } \sigma } \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right} \\ &amp; \propto \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right} \end{aligned}$$</p>
+<h3 id="正态分布-正态分布模型"><a href="#正态分布-正态分布模型" class="headerlink" title="正态分布-正态分布模型"></a>正态分布-正态分布模型</h3><p>假设一组观测样本 $x _ { 1 } , \dots , x _ { n }$ 独立同分布于正态分布，即 $x_{i} \sim \mathcal{N}(\mu,\sigma^{2})$ ，其中， $\boldsymbol{\mu}$是未知的，$\boldsymbol{\sigma^{2}}$ 是已知的（不需要假设先验），则似然为:<br>$$\begin{aligned}\mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \mu \right) &amp; = \prod _ { i = 1 } ^ { n } \frac { 1 } { \sqrt { 2 \pi } \sigma } \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right} \\ &amp; \propto \exp \left{ - \frac { 1 } { 2 \sigma ^ { 2 } } \left( x _ { i } - \mu \right) ^ { 2 } \right} \end{aligned}$$</p>
+<p>进一步，假设<strong>参数</strong>$\boldsymbol{\mu}$的先验为$\boldsymbol{\mu} \sim \mathcal{N}(\mu_{0},\sigma_{0}^{2})$ ，即<br>$$ p\left( \mu | \mu _ { 0 } , \sigma _ { 0 } \right) = \frac { 1 } { \sqrt { 2 \pi } \sigma _ { 0 } } \exp \left{ - \frac { 1 } { 2 \sigma _ { 0 } ^ { 2 } } \left( \mu - \mu _ { 0 } \right) ^ { 2 } \right} $$<br>从而，可以推导出后验为<br>$$\begin{aligned} p\left( \mu | x _ { 1 } , \ldots , x _ { n } , \mu _ { 0 } , \sigma _ { 0 } \right) &amp; \propto p \left( \mu | \mu _ { 0 } , \sigma _ { 0 } \right) \mathcal { L } \left( x _ { 1 } , \ldots , x _ { n } | \mu \right) \\ &amp; \propto \exp { - \frac { 1 } { 2 } \left[ \frac { 1 } { \sigma ^ { 2 } } \sum _ { i = 1 } ^ { n } \left( x _ { i } - \mu \right) ^ { 2 } + \frac { 1 } { \sigma _ { 0 } ^ { 2 } } \left( \mu - \mu _ { 0 } \right) ^ { 2 } \right] } \\ &amp; \propto \exp { - \frac { 1 } { 2 } \left( \frac { 1 } { \sigma _ { 0 } ^ { 2 } } + \frac { n } { \sigma ^ { 2 } } \right) \left( \mu - \frac { \frac { \mu _ { 0 } } { \sigma _ { 0 } ^ { 2 } } + \frac { n \overline { x } } { \sigma ^ { 2 } } } { \frac { 1 } { \sigma _ { 0 } ^ { 2 } } + \frac { n } { \sigma ^ { 2 } } } \right) ^ { 2 } } \end{aligned}$$</p>
 <p>因此，后验也服从正态分布，一般而言，有了先验和似然，计算后验能够方便我们实现变分推断和Gibbs采样等。</p>
 
             </div>
@@ -821,7 +822,7 @@ Material Design 设计
 
             
                 &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
-                <span class="white-color">4.5k</span>
+                <span class="white-color">4.7k</span>
             
 
             
