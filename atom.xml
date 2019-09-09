@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://zongdaoming.github.io/"/>
-  <updated>2019-09-07T03:48:16.121Z</updated>
+  <updated>2019-09-09T07:40:18.418Z</updated>
   <id>https://zongdaoming.github.io/</id>
   
   <author>
@@ -17,11 +17,31 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>multimodal neural translation</title>
+    <link href="https://zongdaoming.github.io/2019/09/09/multimodal-neural-translation/"/>
+    <id>https://zongdaoming.github.io/2019/09/09/multimodal-neural-translation/</id>
+    <published>2019-09-09T07:23:19.000Z</published>
+    <updated>2019-09-09T07:40:18.418Z</updated>
+    
+    <summary type="html">
+    
+    </summary>
+    
+      <category term="ML" scheme="https://zongdaoming.github.io/categories/ML/"/>
+    
+    
+      <category term="ML" scheme="https://zongdaoming.github.io/tags/ML/"/>
+    
+      <category term="multimodal leanring" scheme="https://zongdaoming.github.io/tags/multimodal-leanring/"/>
+    
+  </entry>
+  
+  <entry>
     <title>Hwo to write paper</title>
     <link href="https://zongdaoming.github.io/2019/09/07/paper-writing/how-to-writing-paper/"/>
     <id>https://zongdaoming.github.io/2019/09/07/paper-writing/how-to-writing-paper/</id>
     <published>2019-09-07T03:26:10.000Z</published>
-    <updated>2019-09-07T03:48:16.121Z</updated>
+    <updated>2019-09-09T10:27:57.914Z</updated>
     
     <summary type="html">
     
@@ -29,7 +49,7 @@
       
         
         
-          &lt;h1 id=&quot;How-to-write-your-first-sci-paper&quot;&gt;&lt;a href=&quot;#How-to-write-your-first-sci-paper&quot; class=&quot;headerlink&quot; title=&quot;How to write your first
+          &lt;h1 id=&quot;How-to-write-your-first-SCI-paper&quot;&gt;&lt;a href=&quot;#How-to-write-your-first-SCI-paper&quot; class=&quot;headerlink&quot; title=&quot;How to write your first
         
       
     
