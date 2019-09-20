@@ -1,0 +1,1145 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="dataset pipeline, DorMin">
+    <meta name="description" content="本教程旨在：
+说明 TensorFlow 输入流水线本质上是一个 ETL 流程。
+介绍围绕 tf.data API 的常见性能优化。
+讨论转换的应用顺序对性能的影响。
+总结设计高性能 TensorFlow 输入流水线的最佳做法。
+
+输入流水">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-stand|ie-comp">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>dataset pipeline | DorMin</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/materialize/materialize.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/aos/aos.css">
+    <link rel="stylesheet" type="text/css" href="/libs/animate/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="/libs/lightGallery/css/lightgallery.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/matery.css">
+    <link rel="stylesheet" type="text/css" href="/css/my.css">
+    <style type="text/css">
+        
+    </style>
+
+    <script src="/libs/jquery/jquery-2.2.0.min.js"></script>
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css"></head>
+
+
+<body>
+
+<header class="navbar-fixed">
+    <nav id="headNav" class="bg-color nav-transparent">
+        <div id="navContainer" class="nav-wrapper container">
+            <div class="brand-logo">
+                <a href="/" class="waves-effect waves-light">
+                    
+                    <img src="/medias/logo.png" class="logo-img" alt="LOGO">
+                    
+                    <span class="logo-span">DorMin</span>
+                </a>
+            </div>
+            
+
+<a href="#" data-target="mobile-nav" class="sidenav-trigger button-collapse"><i class="fa fa-navicon"></i></a>
+<ul class="right">
+    
+    <li class="hide-on-med-and-down">
+        <a href="/" class="waves-effect waves-light">
+            
+            <i class="fa fa-home"></i>
+            
+            <span>首页</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/tags" class="waves-effect waves-light">
+            
+            <i class="fa fa-tags"></i>
+            
+            <span>标签</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/categories" class="waves-effect waves-light">
+            
+            <i class="fa fa-bookmark"></i>
+            
+            <span>分类</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/archives" class="waves-effect waves-light">
+            
+            <i class="fa fa-archive"></i>
+            
+            <span>归档</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/about" class="waves-effect waves-light">
+            
+            <i class="fa fa-user-circle-o"></i>
+            
+            <span>关于</span>
+        </a>
+    </li>
+    
+    <li class="hide-on-med-and-down">
+        <a href="/friends" class="waves-effect waves-light">
+            
+            <i class="fa fa-address-book"></i>
+            
+            <span>友情链接</span>
+        </a>
+    </li>
+    
+    <li>
+        <a href="#searchModal" class="modal-trigger waves-effect waves-light">
+            <i id="searchIcon" class="fa fa-search" title="搜索"></i>
+        </a>
+    </li>
+</ul>
+
+<div id="mobile-nav" class="side-nav sidenav">
+
+    <div class="mobile-head bg-color">
+        
+        <img src="/medias/logo.png" class="logo-img circle responsive-img">
+        
+        <div class="logo-name">DorMin</div>
+        <div class="logo-desc">
+            
+            无名逆流
+            
+        </div>
+    </div>
+
+    
+
+    <ul class="menu-list mobile-menu-list">
+        
+        <li>
+            <a href="/" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-home"></i>
+                
+                首页
+            </a>
+        </li>
+        
+        <li>
+            <a href="/tags" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-tags"></i>
+                
+                标签
+            </a>
+        </li>
+        
+        <li>
+            <a href="/categories" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-bookmark"></i>
+                
+                分类
+            </a>
+        </li>
+        
+        <li>
+            <a href="/archives" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-archive"></i>
+                
+                归档
+            </a>
+        </li>
+        
+        <li>
+            <a href="/about" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-user-circle-o"></i>
+                
+                关于
+            </a>
+        </li>
+        
+        <li>
+            <a href="/friends" class="waves-effect waves-light">
+                
+                <i class="fa fa-fw fa-address-book"></i>
+                
+                友情链接
+            </a>
+        </li>
+        
+        
+        <li><div class="divider"></div></li>
+        <li>
+            <a href="https://github.com/zongdaoming/zongdaoming.github.io" class="waves-effect waves-light" target="_blank">
+                <i class="fa fa-github-square fa-fw"></i>Fork Me
+            </a>
+        </li>
+        
+    </ul>
+</div>
+
+        </div>
+
+        
+            <style>
+    .nav-transparent .github-corner {
+        display: none !important;
+    }
+
+    .github-corner {
+        position: absolute;
+        z-index: 10;
+        top: 0;
+        right: 0;
+        border: 0;
+        transform: scale(1.1);
+    }
+
+    .github-corner svg {
+        color: #0f9d58;
+        fill: #fff;
+        height: 64px;
+        width: 64px;
+    }
+
+    .github-corner:hover .octo-arm {
+        animation: a 0.56s ease-in-out;
+    }
+
+    .github-corner .octo-arm {
+        animation: none;
+    }
+
+    @keyframes a {
+        0%,
+        to {
+            transform: rotate(0);
+        }
+        20%,
+        60% {
+            transform: rotate(-25deg);
+        }
+        40%,
+        80% {
+            transform: rotate(10deg);
+        }
+    }
+</style>
+
+<a href="https://github.com/zongdaoming/zongdaoming.github.io" class="github-corner tooltipped hide-on-med-and-down" target="_blank"
+   data-tooltip="Fork Me" data-position="left" data-delay="50">
+    <svg viewBox="0 0 250 250" aria-hidden="true">
+        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
+        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2"
+              fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
+        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z"
+              fill="currentColor" class="octo-body"></path>
+    </svg>
+</a>
+        
+    </nav>
+
+</header>
+
+
+
+
+
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/2.jpg')">
+    <div class="container">
+        <div class="row">
+            <div class="col s12 m12 l12">
+                <div class="brand">
+                    <div class="description center-align post-title">
+                        dataset pipeline
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<main class="post-container content">
+
+    
+    <link rel="stylesheet" href="/libs/tocbot/tocbot.css">
+<style>
+    #articleContent h1::before,
+    #articleContent h2::before,
+    #articleContent h3::before,
+    #articleContent h4::before,
+    #articleContent h5::before,
+    #articleContent h6::before {
+        display: block;
+        content: " ";
+        height: 100px;
+        margin-top: -100px;
+        visibility: hidden;
+    }
+
+    #articleContent :focus {
+        outline: none;
+    }
+
+    .toc-fixed {
+        position: fixed;
+        top: 64px;
+    }
+
+    .toc-widget {
+        padding-left: 20px;
+    }
+
+    .toc-widget .toc-title {
+        margin: 35px 0 15px 0;
+        padding-left: 17px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        line-height: 1.5rem;
+    }
+
+    .toc-widget ol {
+        padding: 0;
+        list-style: none;
+    }
+
+    #toc-content ol {
+        padding-left: 10px;
+    }
+
+    #toc-content ol li {
+        padding-left: 10px;
+    }
+
+    #toc-content .toc-link:hover {
+        color: #42b983;
+        font-weight: 700;
+        text-decoration: underline;
+    }
+
+    #toc-content .toc-link::before {
+        background-color: transparent;
+        max-height: 25px;
+    }
+
+    #toc-content .is-active-link {
+        color: #42b983;
+    }
+
+    #toc-content .is-active-link::before {
+        background-color: #42b983;
+    }
+</style>
+<div class="row">
+    <div class="col s12 m12 l9">
+        <!-- 文章内容详情 -->
+<div id="artDetail">
+    <div class="card">
+        <div class="card-content article-info">
+            <div class="row tag-cate">
+                <div class="col s7">
+                    
+                    <div class="article-tag">
+                        
+                            <a href="/tags/ML/" target="_blank">
+                                <span class="chip bg-color">ML</span>
+                            </a>
+                        
+                            <a href="/tags/Tensorflow/" target="_blank">
+                                <span class="chip bg-color">Tensorflow</span>
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+                <div class="col s5 right-align">
+                    
+                    <div class="post-cate">
+                        <i class="fa fa-bookmark fa-fw icon-category"></i>
+                        
+                            <a href="/categories/Tensorflow/" class="post-category" target="_blank">
+                                Tensorflow
+                            </a>
+                        
+                    </div>
+                    
+                </div>
+            </div>
+
+            <div class="post-info">
+                <div class="post-date info-break-policy">
+                    <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;
+                    2019-09-18
+                </div>
+
+                
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
+                        4.1k
+                    </div>
+                    
+
+                    
+                    <div class="info-break-policy">
+                        <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
+                        16 分
+                    </div>
+                    
+                
+				
+				
+                    <div id="busuanzi_container_page_pv" class="info-break-policy">
+                        <i class="fa fa-eye fa-fw"></i>阅读次数:&nbsp;&nbsp;
+                        <span id="busuanzi_value_page_pv"></span>
+                    </div>
+				
+            </div>
+        </div>
+        <hr class="clearfix">
+        <div class="card-content article-card-content">
+            <div id="articleContent">
+                <h1 id="本教程旨在："><a href="#本教程旨在：" class="headerlink" title="本教程旨在："></a>本教程旨在：</h1><ul>
+<li>说明 TensorFlow 输入流水线本质上是一个 <code>ETL</code> 流程。</li>
+<li>介绍围绕 <code>tf.data</code> API 的常见性能优化。</li>
+<li>讨论转换的应用顺序对性能的影响。</li>
+<li>总结设计高性能 <code>TensorFlow</code> 输入流水线的最佳做法。</li>
+</ul>
+<h1 id="输入流水线结构"><a href="#输入流水线结构" class="headerlink" title="输入流水线结构"></a>输入流水线结构</h1><p>我们可以将典型的 TensorFlow 训练输入流水线视为 ETL 流程：</p>
+<ul>
+<li><strong>提取</strong>：从永久性存储（可以是 HDD 或 SSD 等本地存储或 GCS 或 HDFS 等远程存储）读取数据。</li>
+<li><strong>转换</strong>：使用 CPU 核心解析数据并对其执行预处理操作，例如图像解压缩、数据增强转换（例如随机裁剪、翻转和颜色失真）、重排和批处理。</li>
+<li><strong>加载</strong>：将转换后的数据加载到执行机器学习模型的加速器设备（例如，GPU 或 TPU）上。<br>这种模式可高效利用 CPU，同时预留加速器来完成对模型进行训练的繁重工作。此外，将输入流水线视为 <code>ETL</code> 流程可提供便于应用性能优化的结构。</li>
+</ul>
+<p>使用 <code>tf.estimator.Estimator</code>API时，前两个阶段（提取和转换）是在 <code>input_fn</code>(传递给 <code>tf.estimator.Estimator.train</code>) 中捕获的。代码可能如下（简单序列）实现所示：</p>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">parse_fn</span><span class="token punctuation">(</span>example<span class="token punctuation">)</span><span class="token punctuation">:</span>
+  <span class="token string">"Parse TFExample records and perform simple data augmentation."</span>
+  example_fmt <span class="token operator">=</span> <span class="token punctuation">{</span>
+    <span class="token string">"image"</span><span class="token punctuation">:</span> tf<span class="token punctuation">.</span>FixedLengthFeature<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> tf<span class="token punctuation">.</span>string<span class="token punctuation">,</span> <span class="token string">""</span><span class="token punctuation">)</span><span class="token punctuation">,</span>
+    <span class="token string">"label"</span><span class="token punctuation">:</span> tf<span class="token punctuation">.</span>FixedLengthFeature<span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> tf<span class="token punctuation">.</span>int64<span class="token punctuation">,</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span>
+  <span class="token punctuation">}</span>
+  parsed <span class="token operator">=</span> tf<span class="token punctuation">.</span>parse_single_example<span class="token punctuation">(</span>example<span class="token punctuation">,</span> example_fmt<span class="token punctuation">)</span>
+  image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>decode_image<span class="token punctuation">(</span>parsed<span class="token punctuation">[</span><span class="token string">"image"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+  image <span class="token operator">=</span> _augment_helper<span class="token punctuation">(</span>image<span class="token punctuation">)</span>  <span class="token comment" spellcheck="true"># augments image using slice, reshape, resize_bilinear</span>
+  <span class="token keyword">return</span> image<span class="token punctuation">,</span> parsed<span class="token punctuation">[</span><span class="token string">"label"</span><span class="token punctuation">]</span>
+
+<span class="token keyword">def</span> <span class="token function">input_fn</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+  files <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>Dataset<span class="token punctuation">.</span>list_files<span class="token punctuation">(</span><span class="token string">"/path/to/dataset/train-*.tfrecord"</span><span class="token punctuation">)</span>
+  dataset <span class="token operator">=</span> files<span class="token punctuation">.</span>interleave<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TFRecordDataset<span class="token punctuation">)</span>
+  dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>shuffle<span class="token punctuation">(</span>buffer_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>shuffle_buffer_size<span class="token punctuation">)</span>
+  dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>map_func<span class="token operator">=</span>parse_fn<span class="token punctuation">)</span>
+  dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span>batch_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span>
+  <span class="token keyword">return</span> dataset</code></pre>
+<p>下一部分以此输入流水线为基础，并添加了性能优化。</p>
+<h1 id="优化性能"><a href="#优化性能" class="headerlink" title="优化性能"></a>优化性能</h1><p>由于新型计算设备（例如 GPU 和 TPU）可以不断提高神经网络的训练速度，因此，CPU 处理很容易成为瓶颈。tf.data API 为用户提供构建块来设计可高效利用 CPU 的输入流水线，并优化 ETL 流程的每个步骤。</p>
+<h2 id="流水线"><a href="#流水线" class="headerlink" title="流水线"></a>流水线</h2><p>要执行训练步骤，您必须首先提取并转换训练数据，然后将其提供给在加速器上运行的模型。但是，在一个简单的同步实现中，当 CPU 正在准备数据时，加速器处于空闲状态。相反，当加速器正在训练模型时，CPU 处于空闲状态。因此，训练步的用时是 CPU 预处理时间和加速器训练时间的总和。</p>
+<p>流水线将训练步骤的预处理和模型执行过程重叠到一起。当加速器正在执行第 N 个训练步时，CPU 正在准备第 N+1 步的数据。这样做不仅可以最大限度地缩短训练的单步用时（而不是总用时），而且可以缩短提取和转换数据所需的时间</p>
+<p>如果不使用流水线，CPU 和 GPU/TPU 在大部分时间都处于空闲状态：<br><img src="img/datasets_without_pipelining.png" alt="dataset_withoutpipeline"></p>
+<p>使用流水线可以显著减少空闲时间：</p>
+<p><img src="img/datasets_with_pipelining.png" alt="datasets_with_pipelining"></p>
+<p><code>tf.data</code> API 通过 <code>tf.data.Dataset.prefetch</code> 转换提供了一种软件流水线机制，该机制可用于将生成数据的时间和使用数据的时间分离开。具体而言，该转换使用后台线程和内部缓冲区，以便在请求元素之前从输入数据集中预取这些元素。因此，为了实现上图所示的流水线效果，您可以将 <code>prefetch(1)</code> 作为最终转换添加到数据集流水线中（如果单步训练使用 n 个元素，则添加 <code>prefetch(n)</code>）。</p>
+<p>要将此项更改应用于我们正在运行的示例，请将：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span>batch_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span>
+<span class="token keyword">return</span> dataset</code></pre>
+<p>更改为：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span>batch_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>prefetch<span class="token punctuation">(</span>buffer_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>prefetch_buffer_size<span class="token punctuation">)</span>
+<span class="token keyword">return</span> dataset</code></pre>
+<p>请注意，只要可以将“提供方”的工作与“使用方”的工作重叠，预取转换就会发挥作用。</p>
+<h1 id="并行处理数据提取"><a href="#并行处理数据提取" class="headerlink" title="并行处理数据提取"></a>并行处理数据提取</h1><p>在实际设置中，输入数据可能会远程存储（例如，GCS 或 HDFS），这是因为输入数据不适合本地存储，或因为训练是分布式训练，因此在每台机器上复制输入数据没有意义。非常适合在本地读取数据的数据集流水线在远程读取数据时可能会遇到 I/O 瓶颈，这是因为本地存储和远程存储之间存在以下差异：</p>
+<ul>
+<li><strong>首字节时间</strong>：与本地存储相比，从远程存储读取文件的首字节所用时间可能要多出几个数量级。</li>
+<li><strong>读取吞吐量</strong>：虽然远程存储可提供较大的聚合宽带，但读取单个文件可能只能利用此宽带的一小部分。</li>
+</ul>
+<p>此外，将原始字节读入内存中后，可能还需要对数据进行反序列化或解密（例如，protobuf），这会带来额外的开销。无论数据是在本地还是远程存储，都存在这种开销，但如果未有效预取数据，则在远程存储的情况下可能更糟。</p>
+<p>为了降低各种数据提取开销的影响，<code>tf.data</code> API 提供了 <code>tf.contrib.data.parallel_interleave</code> 转换。使用此转换可以并行执行其他数据集（例如数据文件读取器）并交错这些数据集的内容。可以通过 <code>cycle_length</code> 参数指定要重叠的数据集的数量。</p>
+<p>下图说明了为 parallel_interleave 转换提供 cycle_length=2 的效果：<br><img src="img/datasets_parallel_io.png" alt="parallel_interleave"></p>
+<p>如将</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> files<span class="token punctuation">.</span>interleave<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TFRecordDataset<span class="token punctuation">)</span></code></pre>
+<p>改为：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> files<span class="token punctuation">.</span>apply<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>contrib<span class="token punctuation">.</span>data<span class="token punctuation">.</span>parallel_interleave<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TFRecordDataset<span class="token punctuation">,</span>
+cycle_length<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>num_parallel_readers<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<p>由于负载或网络事件，远程存储系统的吞吐量可能会随时间而变化。鉴于这种差异，<code>parallel_interleave</code> 转换可以选择使用预取（如需了解详情，请参阅 <code>tf.contrib.data.parallel_interleave</code>）。</p>
+<p>默认情况下，<code>parallel_interleave</code> 转换可提供元素的确定性排序以帮助实现可再现性。作为预取的替代方案（在某些情况下可能效率低下），<code>parallel_interleave</code> 转换还提供了一个可提升性能但无法保证排序的选项。特别是，如果 <code>sloppy</code> 参数设为 <code>true</code>，则该转换可在系统请求下一个元素时暂时跳过其元素不可用的文件，从而放弃该转换的确定性排序</p>
+<h1 id="并行处理数据转换"><a href="#并行处理数据转换" class="headerlink" title="并行处理数据转换"></a>并行处理数据转换</h1><p>准备批次数据时，可能需要预处理输入元素。为此，<code>tf.data</code> API 提供了 <code>tf.data.Dataset.map</code> 转换，以将用户定义的函数（例如，正在运行的示例的 <code>parse_fn</code>）应用于输入数据集的每个元素。由于输入元素彼此独立，因此可以跨多个 CPU 核心并行执行预处理。为实现这一点，<code>map</code> 转换提供了 <code>num_parallel_calls</code> 参数来指定并行处理级别。例如，下图说明了将 <code>num_parallel_calls=2</code> 设置为 <code>map</code> 转换的效果：</p>
+<p>如何为 <code>num_parallel_calls</code> 参数选择最佳值取决于硬件、训练数据的特征（例如其大小和形状）、映射函数的成本以及同时在 CPU 上进行的其他处理；一个简单的启发法是<code>设为可用 CPU 核心的数量</code>。例如，如果执行以上示例的机器有 4 个核心，则设置 <code>num_parallel_calls=4</code> 会更高效。另一方面，将 num_parallel_calls 设置为远大于可用 CPU 数量的值可能会导致调度效率低下，进而减慢速度。</p>
+<p>如将</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span>  dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>map_func<span class="token operator">=</span>parse_fn<span class="token punctuation">)</span></code></pre>
+<p>改为：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>map_func<span class="token operator">=</span>parse_fn<span class="token punctuation">,</span>num_parallel_calls<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>num_parallel_calls<span class="token punctuation">)</span></code></pre>
+<p>此外，如果批次大小为数百或数千，那么并行处理批次创建过程还可能给流水线带来更大的优势。为此，<code>tf.data</code> API 提供了 <code>tf.contrib.data.map_and_batch</code>转换，它可以将映射和批次转换“混合”在一起。<br>如将：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>map_func<span class="token operator">=</span>parse_fn<span class="token punctuation">,</span>num_parallel_calls<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>num_parallel_calls<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span>batch_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span></code></pre>
+<p>改为：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>apply<span class="token punctuation">(</span>tf<span class="token punctuation">.</span>contrib<span class="token punctuation">.</span>data<span class="token punctuation">.</span>map_and_batch<span class="token punctuation">(</span>map_func<span class="token operator">=</span>parse_fn<span class="token punctuation">,</span>batch_size<span class="token operator">=</span>FLAGS<span class="token punctuation">.</span>batch_size<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<h1 id="性能考虑因素"><a href="#性能考虑因素" class="headerlink" title="性能考虑因素"></a>性能考虑因素</h1><h2 id="重复和重排"><a href="#重复和重排" class="headerlink" title="重复和重排"></a>重复和重排</h2><p><code>tf.data.Dataset.repeat</code> 转换会将输入数据重复有限（或无限）次；每次数据重复通常称为一个周期。<code>tf.data.Dataset.shuffle</code> 转换会随机化数据集样本的顺序。</p>
+<p>如果在 <code>shuffle</code> 转换之前应用 <code>repeat</code> 转换，则系统会对周期边界进行模糊处理。也就是说，某些元素可以在其他元素出现之前重复出现。另一方面，如果在重复转换之前应用 <code>shuffle</code> 转换，那么在每个周期开始时性能可能会降低，因为需要初始化 <code>shuffle</code> 转换的内部状态。换言之，前者（<code>repeat</code> 在 <code>shuffle</code> 之前）可提供更好的性能，而后者（<code>repeat</code> 在 <code>shuffle</code> 之前）可提供更强的排序保证。</p>
+<p>如果可能，建议您使用 <code>tf.contrib.data.shuffle_and_repeat</code> 混合转换，这样可以达到两全其美的效果（良好的性能和强大的排序保证）。否则，我们建议在重复之前进行重排。</p>
+<h1 id="最佳做法摘要"><a href="#最佳做法摘要" class="headerlink" title="最佳做法摘要"></a>最佳做法摘要</h1><p>使用 <strong>prefetch</strong> 转换可将提供方和使用方的工作重叠。我们特别建议将 prefetch(n)（<strong>其中 n 是单步训练使用的元素数/批次数</strong>）添加到输入流水线的末尾，以便将在 CPU 上执行的转换与在加速器上执行的训练重叠。</p>
+<p>通过设置 <code>num_parallel_calls</code> 参数并行处理 <code>map</code> 转换。建议您将其值设为可用 CPU 核心的数量.</p>
+<ul>
+<li><p>如果您使用 batch 转换将预处理元素组合到一个批次中，建议您使用 map_and_batch 混合转换；特别是在您使用的批次较大时。</p>
+</li>
+<li><p>如果您要处理远程存储的数据并/或需要反序列化，建议您使用 parallel_interleave 转换来重叠从不同文件读取（和反序列化）数据的操作。</p>
+</li>
+<li><p>向量化传递给 <code>map</code> 转换的低开销用户定义函数，以分摊与调度和执行相应函数相关的开销。</p>
+</li>
+<li><p>如果内存可以容纳您的数据，请使用 <code>cache</code> 转换在第一个周期中将数据缓存在内存中，以便后续周期可以避免与读取、解析和转换该数据相关的开销。</p>
+</li>
+<li><p>如果预处理操作会增加数据大小，建议您首先应用 <code>interleave</code>、<code>prefetch</code> 和 <code>shuffle</code>（如果可以）以减少内存使用量。</p>
+</li>
+<li><p>建议您在应用 <code>repeat</code> 转换之前先应用 <code>shuffle</code> 转换，最好使用 <code>shuffle_and_repeat</code> 混合转换。</p>
+</li>
+</ul>
+<h1 id="One-text-example"><a href="#One-text-example" class="headerlink" title="One text example"></a>One text example</h1><p>首先我们需要加载一个名为file.txt的数据集：</p>
+<pre class=" language-python"><code class="language-python">I use TensorFlow
+You use PyTorch
+Both are great</code></pre>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TextLineDataset<span class="token punctuation">(</span><span class="token string">"file.txt"</span><span class="token punctuation">)</span></code></pre>
+<p>我们可以创造一个迭代器对象 <code>iterator object</code> 在数据集上,</p>
+<pre class=" language-python"><code class="language-python">iterator <span class="token operator">=</span> dataset<span class="token punctuation">.</span>make_one_shot_iterator<span class="token punctuation">(</span><span class="token punctuation">)</span>
+next_element <span class="token operator">=</span> iterator<span class="token punctuation">.</span>get_next<span class="token punctuation">(</span><span class="token punctuation">)</span></code></pre>
+<p>one_shot_iterator方法创建一个迭代器，该迭代器能够在数据集上迭代一次。换句话说，一旦到达数据集的末尾，它将停止生成元素并引发异常。</p>
+<p>现在，next_element是一个图的节点(<code>tf.Variable</code>)，它将在每次执行时包含数据集上iterator的下一个元素。现在，让我们运行它:</p>
+<pre class=" language-py"><code class="language-py">with tf.Session() as sess:
+  for i in range(3):
+    print(sess.run(next_element))
+>'I use Tensorflow'
+>'You use PyTorch'
+>'Both are great'</code></pre>
+<p>我们可以轻松地将<code>map</code>应用于数据集。例如，按空格分割单词就像添加一行一样简单：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span><span class="token keyword">lambda</span> string<span class="token punctuation">:</span> tf<span class="token punctuation">.</span>string_split<span class="token punctuation">(</span><span class="token punctuation">[</span>string<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">.</span>values<span class="token punctuation">)</span></code></pre>
+<p>shuffle the dataset 也是直接了当的：</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>shuffle<span class="token punctuation">(</span>buffer_size<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">)</span></code></pre>
+<p>它将加载$3\times3$的元素，并在每次迭代中shuffle它们。</p>
+<p>您还可以创建批:</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span></code></pre>
+<p>并预取数据(换句话说，它总是有一个批准备加载)。</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>prefetch<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span></code></pre>
+<p>完整的代码为：</p>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">import</span> tensorflow <span class="token keyword">as</span> tf
+dataset <span class="token operator">=</span>  tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TextLineDataset<span class="token punctuation">(</span><span class="token string">"./file.txt"</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span><span class="token keyword">lambda</span> string<span class="token punctuation">:</span> tf<span class="token punctuation">.</span>string_split<span class="token punctuation">(</span><span class="token punctuation">[</span>string<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">.</span>values<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>shuffle<span class="token punctuation">(</span>buffer_size<span class="token operator">=</span><span class="token number">5</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>prefetch<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+iterator <span class="token operator">=</span> dataset<span class="token punctuation">.</span>make_one_shot_iterator<span class="token punctuation">(</span><span class="token punctuation">)</span>
+next_element <span class="token operator">=</span> iterator<span class="token punctuation">.</span>get_next<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">with</span> tf<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> sess<span class="token punctuation">:</span>
+        <span class="token keyword">print</span><span class="token punctuation">(</span>sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>next_element<span class="token punctuation">)</span><span class="token punctuation">)</span></code></pre>
+<p><code>tf.shuffle</code> 使用指南</p>
+<pre class=" language-python"><code class="language-python">tf<span class="token punctuation">.</span>shuffle<span class="token punctuation">(</span>
+    buffer_size<span class="token punctuation">,</span>
+    seed<span class="token operator">=</span>None<span class="token punctuation">,</span>
+    reshuffle_each_iteration<span class="token operator">=</span>None
+<span class="token punctuation">)</span></code></pre>
+<p>随机打乱此数据集的元素。</p>
+<p>该数据集使用buffer_size元素填充缓冲区，然后从该缓冲区随机抽取元素，用新元素替换所选元素。对于完美的洗牌，需要<strong>大于或等于数据集的完整大小的缓冲区大小</strong>。</p>
+<p>例如，如果数据集包含10,000个元素，但是buffer_size被设置为1,000，那么shuffle将首先从缓冲区中的前1,000个元素中随机选择一个元素。一旦选择了一个元素，它在缓冲区中的空间将被下一个(即1,001-st)元素替换，以维护1,000个元素缓冲区。</p>
+<p>参数:<br>buffer_size:一个tf.int64标量 tf.Tensor，表示新数据集将从中采样的数据集中元素的数量。<br>seed:(可选)一个tf.int64标量 tf.Tensor，表示用来创建分布的随机种子。<br>reshuffle_each_iteration:(可选)。一个布尔值，如果为真，则表示每次遍历数据集时，数据集都应该被伪随机地重新shuffle。(default to True)。<br>Returns:<br>Dataset: A Dataset.</p>
+<p>它的行为与上面的类似，但是由于<code>init_op</code>，我们可以选择从头“restart”。当我们想要执行多个epochs时，这将变得非常方便!</p>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TextLineDataset<span class="token punctuation">(</span><span class="token string">"file.txt"</span><span class="token punctuation">)</span>
+iterator <span class="token operator">=</span> dataset<span class="token punctuation">.</span>make_initial_iterator<span class="token punctuation">(</span><span class="token punctuation">)</span>
+next_element <span class="token operator">=</span> iterator<span class="token punctuation">.</span>get_next<span class="token punctuation">(</span><span class="token punctuation">)</span>
+init_op <span class="token operator">=</span> iterator<span class="token punctuation">.</span>initializer
+<span class="token keyword">with</span> tf<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> sess<span class="token punctuation">:</span>
+     <span class="token comment" spellcheck="true"># Initialize the iterators</span>
+     sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>init_op<span class="token punctuation">)</span>
+     <span class="token keyword">print</span><span class="token punctuation">(</span>sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>next_element<span class="token punctuation">)</span><span class="token punctuation">)</span>
+     <span class="token keyword">print</span><span class="token punctuation">(</span>sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>next_element<span class="token punctuation">)</span><span class="token punctuation">)</span>
+     <span class="token comment" spellcheck="true"># Move the iterator back to the begining</span>
+     sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>init<span class="token punctuation">)</span>
+     <span class="token keyword">print</span><span class="token punctuation">(</span>sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>next_element<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token operator">></span> <span class="token string">'I use Tensorflow'</span>
+  <span class="token string">'You use PyTorch'</span>
+  <span class="token string">'I use Tensorflow'</span> <span class="token comment" spellcheck="true"># Iterator moved back at the beginning</span></code></pre>
+<p>由于我们在不同的epoch中只使用一个session，因此需要能够重新启动迭代器。其他一些方法(如tf.Estimator)通过在每个epoch中创建一个新会话来减少使用可初始化迭代器的需求。但是这是有代价的:每次调用estimator.train()或estimator.evaluate()时，都必须重新加载权重和图并重新初始化。</p>
+<h1 id="Building-an-image-data-pipeline"><a href="#Building-an-image-data-pipeline" class="headerlink" title="Building an image data pipeline"></a>Building an image data pipeline</h1><p>下面是图像数据集的样子。这里我们已经有了jpeg图像的文件名列表和相应的标签列表。我们采用以下步骤进行训练:</p>
+<ul>
+<li>从文件名和标签的切片创建数据集</li>
+<li>使用与数据集长度相等的缓冲区大小来shuffle数据。</li>
+<li>解析从文件名到像素值的图像。使用多线程来提高预处理的速度(可选用于训练)图像数据增强。使用多线程来提高预处理的速度</li>
+<li>批处理图像</li>
+<li>预取一批，以确保随时可以提供一批</li>
+</ul>
+<pre class=" language-python"><code class="language-python">dataset <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>Dataset<span class="token punctuation">.</span>from_tensor_slices<span class="token punctuation">(</span><span class="token punctuation">(</span>filenames<span class="token punctuation">,</span>labels<span class="token punctuation">)</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>shuffle<span class="token punctuation">(</span>len<span class="token punctuation">(</span>filenames<span class="token punctuation">)</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>parse_function<span class="token punctuation">,</span>num_parallel_calls<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>map<span class="token punctuation">(</span>train_preprocess<span class="token punctuation">,</span>num_parallel_calls<span class="token operator">=</span><span class="token number">4</span><span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>batch<span class="token punctuation">(</span>batch_size<span class="token punctuation">)</span>
+dataset <span class="token operator">=</span> dataset<span class="token punctuation">.</span>prefetch<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span></code></pre>
+<p><code>parse_function</code>的作用：</p>
+<ul>
+<li>read the content of the file</li>
+<li>decode using jpeg format</li>
+<li>convert to float values in [0, 1]</li>
+<li>resize to size (64, 64)</li>
+</ul>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">parse_function</span><span class="token punctuation">(</span>filename<span class="token punctuation">,</span> label<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    image_string <span class="token operator">=</span> tf<span class="token punctuation">.</span>read_file<span class="token punctuation">(</span>filename<span class="token punctuation">)</span>
+
+    <span class="token comment" spellcheck="true"># Don't use tf.image.decode_image, or the output shape will be undefined</span>
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>decode_jpeg<span class="token punctuation">(</span>image_string<span class="token punctuation">,</span> channels<span class="token operator">=</span><span class="token number">3</span><span class="token punctuation">)</span>
+
+    <span class="token comment" spellcheck="true"># This will convert to float values in [0, 1]</span>
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>convert_image_dtype<span class="token punctuation">(</span>image<span class="token punctuation">,</span> tf<span class="token punctuation">.</span>float32<span class="token punctuation">)</span>
+
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>resize_images<span class="token punctuation">(</span>image<span class="token punctuation">,</span> <span class="token punctuation">[</span><span class="token number">64</span><span class="token punctuation">,</span> <span class="token number">64</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> resized_image<span class="token punctuation">,</span> label</code></pre>
+<p>最后，<code>train_preprocess</code>可以在训练过程中是可选的，进行数据扩充:</p>
+<ul>
+<li>水平翻转图像的概率为1/2</li>
+<li>应用随机亮度和饱和度</li>
+</ul>
+<pre class=" language-python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">train_preprocess</span><span class="token punctuation">(</span>image<span class="token punctuation">,</span>label<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>random_flip_left_right<span class="token punctuation">(</span>image<span class="token punctuation">)</span>
+
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>random_brightness<span class="token punctuation">(</span>image<span class="token punctuation">,</span>max_delta<span class="token operator">=</span><span class="token number">32.0</span><span class="token operator">/</span><span class="token number">255.0</span><span class="token punctuation">)</span>
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>image<span class="token punctuation">.</span>random_saturation<span class="token punctuation">(</span>image<span class="token punctuation">,</span>lower<span class="token operator">=</span><span class="token number">0.5</span><span class="token punctuation">,</span>upper <span class="token operator">=</span> <span class="token number">1.5</span><span class="token punctuation">)</span>
+
+    <span class="token comment" spellcheck="true"># Make sure image is still in [0,1]</span>
+    image <span class="token operator">=</span> tf<span class="token punctuation">.</span>clip_by_value<span class="token punctuation">(</span>image<span class="token punctuation">,</span><span class="token number">0.0</span><span class="token punctuation">,</span><span class="token number">1.0</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> image<span class="token punctuation">,</span>label</code></pre>
+<h1 id="Building-a-text-data-pipeline"><a href="#Building-a-text-data-pipeline" class="headerlink" title="Building a text data pipeline"></a>Building a text data pipeline</h1><p>假设我们的任务是命名实体识别。换句话说，输入是一个句子，输出是每个单词的标签，比如：</p>
+<pre class=" language-python"><code class="language-python">John   lives <span class="token keyword">in</span> New   York
+B<span class="token operator">-</span>PER  O     O  B<span class="token operator">-</span>LOC I<span class="token operator">-</span>LOC</code></pre>
+<p>因此，我们的数据集需要同时加载句子和标签。我们将把它们存储在两个不同的文件中，一个句子.txt文件(每行一个)和一个标签.txt文件(包含标签)。例如:</p>
+<pre class=" language-python"><code class="language-python"><span class="token comment" spellcheck="true"># sentences.txt</span>
+John lives <span class="token keyword">in</span> New York
+Where <span class="token keyword">is</span> John ?</code></pre>
+<pre class=" language-python"><code class="language-python"><span class="token comment" spellcheck="true"># labels.txt</span>
+B<span class="token operator">-</span>PER O O B<span class="token operator">-</span>LOC I<span class="token operator">-</span>LOC
+O O B<span class="token operator">-</span>PER O</code></pre>
+<p>构造 <code>tf.data</code> object。遍历这些文件的数据对象很简单,</p>
+<pre class=" language-python"><code class="language-python">sentences <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TextLineDataset<span class="token punctuation">(</span><span class="token string">"sentence.txt"</span><span class="token punctuation">)</span>
+labels <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>TextLineDataset<span class="token punctuation">(</span><span class="token string">"labels.txt"</span><span class="token punctuation">)</span></code></pre>
+<h2 id="Zip-datasets-together"><a href="#Zip-datasets-together" class="headerlink" title="Zip datasets together"></a>Zip datasets together</h2><p>在这个阶段，我们可能需要同时遍历这两个文件。这种操作通常称为“zip”。幸运的是，<code>tf.data</code>中带有这样一个函数：</p>
+<pre class=" language-python"><code class="language-python"><span class="token comment" spellcheck="true"># zip the sentence and the labels togehters</span>
+dataset <span class="token operator">=</span> tf<span class="token punctuation">.</span>data<span class="token punctuation">.</span>Dataset<span class="token punctuation">.</span>zip<span class="token punctuation">(</span><span class="token punctuation">(</span>sentences<span class="token punctuation">,</span> labels<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment" spellcheck="true"># Create a one shot iterator over the zipped dataset</span>
+iterator <span class="token operator">=</span> dataset<span class="token punctuation">.</span>make_one_shot_iterator<span class="token punctuation">(</span><span class="token punctuation">)</span>
+next_element <span class="token operator">=</span> iterator<span class="token punctuation">.</span>get_next<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token comment" spellcheck="true">#  Actually run in a Session</span>
+<span class="token keyword">with</span> tf<span class="token punctuation">.</span>Session<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">as</span> sess<span class="token punctuation">:</span>
+   <span class="token keyword">for</span> i <span class="token keyword">in</span> range<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+       <span class="token keyword">print</span><span class="token punctuation">(</span>sess<span class="token punctuation">.</span>run<span class="token punctuation">(</span>dataset<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token operator">></span> <span class="token punctuation">(</span><span class="token string">'John lives in New York'</span><span class="token punctuation">,</span> <span class="token string">'B-PER O O B-LOC I-LOC'</span><span class="token punctuation">)</span>
+  <span class="token punctuation">(</span><span class="token string">'Where is John ?'</span><span class="token punctuation">,</span> <span class="token string">'O O B-PER O'</span><span class="token punctuation">)</span></code></pre>
+
+            </div>
+            <hr/>
+
+            
+            <style>
+    #reward {
+        margin: 40px 0;
+        text-align: center;
+    }
+
+    #reward .reward-link {
+        font-size: 1.88rem;
+    }
+
+    #reward .btn-floating:hover {
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2), 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #rewardModal {
+        width: 320px;
+        height: 350px;
+    }
+
+    #rewardModal .reward-title {
+        margin: 15px auto;
+        padding-bottom: 5px;
+    }
+
+    #rewardModal .modal-content {
+        padding: 10px;
+    }
+
+    #rewardModal .close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 1.3rem;
+        line-height: 20px;
+        cursor: pointer;
+    }
+
+    #rewardModal .close:hover {
+        color: #ef5350;
+        transform: scale(1.3);
+        -moz-transform:scale(1.3);
+        -webkit-transform:scale(1.3);
+        -o-transform:scale(1.3);
+    }
+
+    #rewardModal .reward-tabs {
+        margin: 0 auto;
+        width: 210px;
+    }
+
+    .reward-tabs .tabs {
+        height: 38px;
+        margin: 10px auto;
+        padding-left: 0;
+    }
+
+    .reward-content ul {
+        padding-left: 0 !important;
+    }
+
+    .reward-tabs .tabs .tab {
+        height: 38px;
+        line-height: 38px;
+    }
+
+    .reward-tabs .tab a {
+        color: #fff;
+        background-color: #ccc;
+    }
+
+    .reward-tabs .tab a:hover {
+        background-color: #ccc;
+        color: #fff;
+    }
+
+    .reward-tabs .wechat-tab .active {
+        color: #fff !important;
+        background-color: #22AB38 !important;
+    }
+
+    .reward-tabs .alipay-tab .active {
+        color: #fff !important;
+        background-color: #019FE8 !important;
+    }
+
+    .reward-tabs .reward-img {
+        width: 210px;
+        height: 210px;
+    }
+</style>
+
+<div id="reward">
+    <a href="#rewardModal" class="reward-link modal-trigger btn-floating btn-large waves-effect waves-light red">赏</a>
+
+    <!-- Modal Structure -->
+    <div id="rewardModal" class="modal">
+        <div class="modal-content">
+            <a class="close modal-close"><i class="fa fa-close"></i></a>
+            <h4 class="reward-title">打个赏</h4>
+            <div class="reward-content">
+                <div class="reward-tabs">
+                    <ul class="tabs row">
+                        <li class="tab col s6 alipay-tab waves-effect waves-light"><a href="#alipay">支付宝</a></li>
+                        <li class="tab col s6 wechat-tab waves-effect waves-light"><a href="#wechat">微 信</a></li>
+                    </ul>
+                    <div id="alipay">
+                        <img src="/medias/reward/alipay.jpg" class="reward-img" alt="支付宝打赏二维码">
+                    </div>
+                    <div id="wechat">
+                        <img src="/medias/reward/wechat.jpg" class="reward-img" alt="微信打赏二维码">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function () {
+        $('.tabs').tabs();
+    });
+</script>
+            
+
+            <link rel="stylesheet" type="text/css" href="/libs/share/css/share.min.css">
+
+<div id="article-share">
+    
+    <div class="social-share" data-disabled="qzone" data-wechat-qrcode-helper="<p>微信里点“发现”->“扫一扫”二维码便可查看分享。</p>"></div>
+    
+</div>
+
+<script src="/libs/share/js/social-share.min.js"></script>
+
+            <div class="reprint">
+                <p>
+                    <span class="reprint-tip">
+                        <i class="fa fa-exclamation-circle"></i>&nbsp;&nbsp;转载规则:
+                    </span>
+                    <a href="https://zongdaoming.github.io" class="b-link-green">DorMin</a>
+                    <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
+                    <a href="/2019/09/18/machine-learning-base/dataset-pipeline/" class="b-link-green">dataset pipeline</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    
+        <link rel="stylesheet" href="/libs/gitalk/gitalk.css">
+<link rel="stylesheet" href="/css/my-gitalk.css">
+
+<div class="card gitalk-card" data-aos="fade-up">
+    <div id="gitalk-container" class="card-content"></div>
+</div>
+
+<script src="/libs/gitalk/gitalk.min.js"></script>
+<script>
+    let gitalk = new Gitalk({
+        clientID: 'cda4fee39cf105ea7637',
+        clientSecret: '25ac3a74a67de2c6a82b5bbd65b4362273f4ed18',
+        repo: 'zongdaoming.github.io',
+        owner: 'zongdaoming',
+        admin: "zongdaoming",
+        id: '2019-09-18T14-41-23',
+        distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+
+    gitalk.render('gitalk-container');
+</script>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<article id="prenext-posts" class="prev-next articles">
+    <div class="row article-row">
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge left-badge text-color">
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
+            <div class="card">
+                <a href="/2019/09/19/machine-learning-base/multimodal-neural-translation3/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="multimodal-neural-translation series 3">
+                        
+                        <span class="card-title">multimodal-neural-translation series 3</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary">
+本文主要介绍多模态神经翻译的几个有趣的小任务：Image-pivoted Zero-resource Translation (Bilingual lexicon induction)Unsupervised Bilingual Lexi</div>
+                    <div class="publish-info">
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-19
+                        </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/multimodal-learning/" class="post-category" target="_blank">
+                                    multimodal learning
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/ML/" target="_blank">
+                        <span class="chip bg-color">ML</span>
+                    </a>
+                    
+                    <a href="/tags/multimodal-learning/" target="_blank">
+                        <span class="chip bg-color">multimodal learning</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/09/17/machine-learning-base/multi-gpu-tensorflow/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="Tensorflow指南(1)">
+                        
+                        <span class="card-title">Tensorflow指南(1)</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary">变量我们使用 tf.Variable 类操作变量。tf.Variable 表示可通过对其运行操作来改变其值的张量。与 tf.Tensor 对象不同，tf.Variable 存在于单个 session.run 调用的上下文之外，变量只存在与一</div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-17
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Tensorflow/" class="post-category" target="_blank">
+                                    Tensorflow
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Tensorflow/" target="_blank">
+                        <span class="chip bg-color">Tensorflow</span>
+                    </a>
+                    
+                    <a href="/tags/Tricks/" target="_blank">
+                        <span class="chip bg-color">Tricks</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+</article>
+</div>
+
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: DorMin<br />'
+            + '作者: Zong Daoming<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
+
+    </div>
+    <div class="col l3 hide-on-med-and-down">
+        <div class="toc-widget">
+            <div class="toc-title"><i class="fa fa-list-alt"></i>&nbsp;&nbsp;目录</div>
+            <div id="toc-content"></div>
+        </div>
+    </div>
+</div>
+
+<script src="/libs/tocbot/tocbot.min.js"></script>
+<script>
+    $(function () {
+        tocbot.init({
+            tocSelector: '#toc-content',
+            contentSelector: '#articleContent',
+            headingsOffset: -($(window).height() * 0.4 - 45),
+            // headingsOffset: -205,
+            headingSelector: 'h2, h3, h4'
+        });
+
+        // modify the toc link href to support Chinese.
+        let i = 0;
+        let tocHeading = 'toc-heading-';
+        $('#toc-content a').each(function () {
+            $(this).attr('href', '#' + tocHeading + (++i));
+        });
+
+        // modify the heading title id to support Chinese.
+        i = 0;
+        $('#articleContent').children('h2, h3, h4').each(function () {
+            $(this).attr('id', tocHeading + (++i));
+        });
+
+        // Set scroll toc fixed.
+        let tocHeight = parseInt($(window).height() * 0.4 - 64);
+        let $tocWidget = $('.toc-widget');
+        $(window).scroll(function () {
+            let scroll = $(window).scrollTop();
+            /* add post toc fixed. */
+            if (scroll > tocHeight) {
+                $tocWidget.addClass('toc-fixed');
+            } else {
+                $tocWidget.removeClass('toc-fixed');
+            }
+        });
+    });
+</script>
+    
+
+</main>
+
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script>
+ MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ]
+    }
+});
+</script>
+
+<footer class="page-footer bg-color">
+    <div class="container row center-align">
+        <div class="col s12 m8 l8 copy-right">
+            本站由&copy;<a href="https://zongdaoming.github.io/" target="_blank">ZongDaoming</a>基于
+            <a href="https://hexo.io/" target="_blank">Hexo</a> 的
+            <a href="https://github.com/blinkfox/hexo-theme-matery" target="_blank">hexo-theme-matery</a>主题搭建.
+
+            
+                &nbsp;<i class="fa fa-area-chart"></i>&nbsp;站点总字数:&nbsp;
+                <span class="white-color">35.6k</span>
+            
+
+            
+			
+                <br>
+                
+                <span id="busuanzi_container_site_pv">
+                    <i class="fa fa-heart-o"></i>
+                    本站总访问量 <span id="busuanzi_value_site_pv" class="white-color"></span>
+                </span>
+                
+                
+                <span id="busuanzi_container_site_uv">
+                    <i class="fa fa-users"></i>
+                    次,&nbsp;访客数 <span id="busuanzi_value_site_uv" class="white-color"></span> 人.
+                </span>
+                
+            
+        </div>
+        <div class="col s12 m4 l4 social-link social-statis">
+    <a href="https://zongdaoming.github.io" class="tooltipped" target="_blank" data-tooltip="访问我的GitHub" data-position="top" data-delay="50">
+        <i class="fa fa-github"></i>
+    </a>
+
+
+
+    <a href="mailto:ecnuzdm@gmail.com" class="tooltipped" target="_blank" data-tooltip="邮件联系我" data-position="top" data-delay="50">
+        <i class="fa fa-envelope-open"></i>
+    </a>
+
+
+
+    <a href="tencent://AddContact/?fromId=50&fromSubId=1&subcmd=all&uin=1934703843" class="tooltipped" data-tooltip="QQ联系我: 1934703843" data-position="top" data-delay="50">
+        <i class="fa fa-qq"></i>
+    </a>
+
+
+
+    <a href="/atom.xml" class="tooltipped" target="_blank" data-tooltip="RSS 订阅" data-position="top" data-delay="50">
+        <i class="fa fa-rss"></i>
+    </a>
+</div>
+    </div>
+</footer>
+
+<div class="progress-bar"></div>
+
+
+<!-- 搜索遮罩框 -->
+<div id="searchModal" class="modal">
+    <div class="modal-content">
+        <div class="search-header">
+            <span class="title"><i class="fa fa-search"></i>&nbsp;&nbsp;搜索</span>
+            <input type="search" id="searchInput" name="s" placeholder="请输入搜索的关键字"
+                   class="search-input">
+        </div>
+        <div id="searchResult"></div>
+    </div>
+</div>
+
+<script src="/js/search.js"></script>
+<script type="text/javascript">
+$(function () {
+    searchFunc("/" + "search.xml", 'searchInput', 'searchResult');
+});
+</script>
+<!-- 回到顶部按钮 -->
+<div id="backTop" class="top-scroll">
+    <a class="btn-floating btn-large waves-effect waves-light" href="#!">
+        <i class="fa fa-angle-up"></i>
+    </a>
+</div>
+
+
+<script src="/libs/materialize/materialize.min.js"></script>
+<script src="/libs/masonry/masonry.pkgd.min.js"></script>
+<script src="/libs/aos/aos.js"></script>
+<script src="/libs/scrollprogress/scrollProgress.min.js"></script>
+<script src="/libs/lightGallery/js/lightgallery-all.min.js"></script>
+<script src="/js/matery.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+
+
+
+    <script src="/libs/others/clicklove.js"></script>
+
+
+    <script async src="/libs/others/busuanzi.pure.mini.js"></script>
+
+
+</body>
+</html>
