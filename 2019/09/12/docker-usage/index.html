@@ -4,8 +4,14 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="3d_reconstruction, DorMin">
-    <meta name="description" content="3d_reconstruction | DorMin">
+    <meta name="keywords" content="Docker Usage, DorMin">
+    <meta name="description" content="Docker从入门到放弃
+
+作者: 宗道明
+
+请参阅Tensorflow官方文档和Docker官方文档获得详细信息。
+启动 TensorFlow Docker 容器要启动配置 TensorFlow 的容器，请使用以下命令格式：
+docker">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +19,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>3d_reconstruction | DorMin</title>
+    <title>Docker Usage | DorMin</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -260,13 +266,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/15.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        3d_reconstruction
+                        Docker Usage
                     </div>
                 </div>
             </div>
@@ -358,12 +364,8 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/Machine-Learning/" target="_blank">
-                                <span class="chip bg-color">Machine Learning</span>
-                            </a>
-                        
-                            <a href="/tags/Computer-Vision/" target="_blank">
-                                <span class="chip bg-color">Computer Vision</span>
+                            <a href="/tags/tools/" target="_blank">
+                                <span class="chip bg-color">tools</span>
                             </a>
                         
                     </div>
@@ -374,8 +376,8 @@
                     <div class="post-cate">
                         <i class="fa fa-bookmark fa-fw icon-category"></i>
                         
-                            <a href="/categories/Computer-Vision/" class="post-category" target="_blank">
-                                Computer Vision
+                            <a href="/categories/tools/" class="post-category" target="_blank">
+                                tools
                             </a>
                         
                     </div>
@@ -393,14 +395,14 @@
                     
                     <div class="info-break-policy">
                         <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;
-                        0
+                        1.2k
                     </div>
                     
 
                     
                     <div class="info-break-policy">
                         <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                        1 分
+                        5 分
                     </div>
                     
                 
@@ -416,7 +418,75 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                
+                <h1 id="Docker从入门到放弃"><a href="#Docker从入门到放弃" class="headerlink" title="Docker从入门到放弃"></a>Docker从入门到放弃</h1><hr>
+<blockquote>
+<p>作者: <a href="https://github.com/zongdaoming" target="_blank" rel="noopener">宗道明</a></p>
+</blockquote>
+<p>请参阅<a href="https://tensorflow.google.cn/install/docker" target="_blank" rel="noopener">Tensorflow官方文档</a>和<a href="https://docs.docker.com/engine/reference/run/#clean-up---rm" target="_blank" rel="noopener">Docker官方文档获得详细信息</a>。</p>
+<h2 id="启动-TensorFlow-Docker-容器"><a href="#启动-TensorFlow-Docker-容器" class="headerlink" title="启动 TensorFlow Docker 容器"></a>启动 TensorFlow Docker 容器</h2><p>要启动配置 TensorFlow 的容器，请使用以下命令格式：</p>
+<pre class=" language-py"><code class="language-py">docker run [-it] [--rm] [-p hostPort:containerPort] tensorflow/tensorflow[:tag] [command]</code></pre>
+<p>其中，</p>
+<ul>
+<li><code>docker run</code>是使用一个镜像生成一个运行的容器；</li>
+<li><code>-it</code>指交互模式，启动后终端在运行着的容器里面，与之对应的有-d后端运行模式，启动后终端交互在实体机，要想进入容器需要使用命令<code>docker exec -it container-name bash</code> <code>docker exec -it container-name</code>意为交互模式进入正在运行的一个容器，bash意为进入容器后使用的命令，这里用的是bash，这样进入容器后就能执行shell；</li>
+<li><code>--rm</code>意为退出shell的时候自动删除容器，常在测试的时候使用，这样不用每次修改去删除已有的容器</li>
+<li><code>-p hostport:containerPort</code>指的是端口映射，前面的是实体机的端口，后面是容器里面暴露出的端口，两边端口可以不一样，这样同一个镜像可以启动多个对应不同端口的服务，如<code>-p 8000:4000</code></li>
+<li><code>tensorflow/tensorflow[:tag]</code>表示的是镜像的名字，冒号后面是tag,表示版本，如果不显示给出tag这每次都会从hub上拉取latest的镜像。如基础镜像jupyter常推荐使用的一个版本(jupyter镜像预装了很多常用的模块)：<code>jupyter/datascience-notebook:281505737f8a</code>。 <strong>如果网络环境不好的话比较费时间，推荐显式给出tag，这样每次构建都会使用已有的镜像。</strong></li>
+</ul>
+<p>参看<a href="https://hub.docker.com/r/tensorflow/tensorflow/tags/" target="_blank" rel="noopener"><code>here</code></a>查看每个tensorflow镜像具体的版本。<br>下载tensorflow镜像的命令是：<code>docker pull tensflow/tensorflow:tag</code>,
+如：</p>
+<ul>
+<li>docker pull tensorflow/tensorflow                     # latest stable release</li>
+<li>docker pull tensorflow/tensorflow:devel-gpu           # nightly dev release w/ GPU support</li>
+<li>docker pull tensorflow/tensorflow:latest-gpu-jupyter  # latest release w/ GPU support and Jupyter</li>
+</ul>
+<h2 id="启用带权限控制的容器"><a href="#启用带权限控制的容器" class="headerlink" title="启用带权限控制的容器"></a>启用带权限控制的容器</h2><p>docker run -d -p 8000:4000 jupyter/datascience-notebook start-notebook.sh –NotebookApp.password=’pwd’</p>
+<h3 id="运行带有目录共享的容器"><a href="#运行带有目录共享的容器" class="headerlink" title="运行带有目录共享的容器"></a>运行带有目录共享的容器</h3><p>docker run -it –rm  -p 8000:4000 -v /home/zongdaoming/cv/GraphSAGE/:/home/zongdaoming/work  jupyter/datascience-notebook start-notebook.sh –NotebookApp.password=’pwd’</p>
+<p>1.密码生成的两种方式 </p>
+<pre class=" language-py"><code class="language-py">import IPython
+IPython.lib.passwd()</code></pre>
+<pre class=" language-py"><code class="language-py">ipython
+from noteboook.auth import passwd
+passwd()
+quit()</code></pre>
+<ol start="2">
+<li>生成jupyter notebook 的配置文件<br><code>jupyter notebook --generate-config</code> 这时候会生成配置文件 在<code>~/.jupyter/jupyter_notebook_config.py</code>,我们需要修改配置文件<pre class=" language-py"><code class="language-py">vim ~/.jupyter/jupyter_notebook_config.py</code></pre>
+加入如下内容，其中sha1那一串秘钥是上面生成的那一串<pre class=" language-py"><code class="language-py">c.NotebookApp.ip='*'
+c.NotebookApp.password = u'sha1:41e4da01dde4:e820dc9c0398eda2dc9323c9e4a51ea1228166a2'
+c.NotebookApp.open_browser = False
+c.NotebookApp.port =4000</code></pre>
+4000表明要使用container的4000端口访问jupyter，然后保存退出</li>
+<li>打开jupyter notebook<pre class=" language-py"><code class="language-py">jupyter notebook  --allow-root</code></pre>
+</li>
+</ol>
+<h2 id="带有目录共享的容器"><a href="#带有目录共享的容器" class="headerlink" title="带有目录共享的容器"></a>带有目录共享的容器</h2><p>docker run -it –rm -p 8888:8888 -v /home/zongdaoming/cv/GraphSAGE/notebook:/home/zongdaoming/   jupyter/datascience-notebook start-notebook.sh –NotebookApp.password=’pwd’<br><code>VOLUME (shared filesystems)
+-v, --volume=[host-src:]container-dest[:&lt;options&gt;]: Bind</code> 如”/home/zongdaoming/cv/GraphSAGE/notebook:/home/zongdaoming/“</p>
+<p>container-dest必须始终是绝对路径，例如/src/docs。host-src可以是绝对路径，也可以是名称值。如果为host-dir提供绝对路径，Docker绑定将挂载到指定的路径。如果提供一个名称，Docker将根据该名称创建一个已命名的卷。 例如，可以为host-src值指定/foo或foo。如果提供/foo值，Docker将创建绑定挂载。如果您提供foo规范，Docker将创建一个命名卷。</p>
+<h2 id="构建Dockerfile"><a href="#构建Dockerfile" class="headerlink" title="构建Dockerfile"></a>构建Dockerfile</h2><p>Dockerfile由多条指令组成，每条指令在编译镜像时执行相应的程序完成某些功能，由指令+参数组成，以逗号分隔，#作为注释起始符，虽说指令不区分大小写，但是一般指令使用大些，参数使用小写。一个例子:</p>
+<pre class=" language-py"><code class="language-py">FROM jupyter/datascience-notebook:281505737f8a
+MAINTAINER zong "15901768536@163.com"
+# pytorch
+RUN conda install pytorch torchvision -c soumith
+# spotlight(https://github.com/maciejkula/spotlight)
+RUN conda install -c maciejkula -c soumith spotlight=0.1.2</code></pre>
+<p>其中，</p>
+<ul>
+<li>指令：FROM 功能描述：设置基础镜像 语法：FROM &lt; image&gt;[:&lt; tag&gt; | @&lt; digest&gt;] </li>
+<li>指令：MAINTAINER 功能描述：设置镜像作者 语法：MAINTAINER &lt; name&gt; </li>
+<li>指令：RUN 语法：RUN &lt; command&gt; RUN [“executable”,”param1”,”param2”] 提示：RUN指令会生成容器，在容器中执行脚本，容器使用当前镜像，脚本指令完成后，Docker Daemon会将该容器提交为一个<strong>中间镜像</strong>，供后面的指令使用 </li>
+<li>指令：COPY  功能描述：复制文件到镜像中 语法：COPY &lt; src&gt;… &lt; dest&gt;|[“&lt; src&gt;”,… “&lt; dest&gt;”] 提示：指令逻辑和ADD十分相似，同样Docker Daemon会从编译目录寻找文件或目录，dest为镜像中的绝对路径或者相对于WORKDIR的路径</li>
+</ul>
+<p>从构建的镜像运行容器</p>
+<pre class=" language-python"><code class="language-python">docker build <span class="token operator">-</span>t graphsage<span class="token punctuation">:</span>gpu <span class="token operator">-</span>f Dockerfile<span class="token punctuation">.</span>gpu <span class="token punctuation">.</span>
+nvidia<span class="token operator">-</span>docker run <span class="token operator">-</span>it graphsage<span class="token punctuation">:</span>gpu bash</code></pre>
+<p>##其他命令</p>
+<ul>
+<li>docker search python # 搜寻镜像</li>
+<li>docker stop container-name/container-id # 停止运行着的容器</li>
+<li>docker rm container-name # 删除已有的容器，要先停止</li>
+<li>docker rmi image-name # 删除已有的镜像</li>
+</ul>
+
             </div>
             <hr/>
 
@@ -563,7 +633,7 @@
                     </span>
                     <a href="https://zongdaoming.github.io" class="b-link-green">DorMin</a>
                     <i class="fa fa-angle-right fa-lg fa-fw text-color"></i>
-                    <a href="/2019/09/12/3d-reconstruction/" class="b-link-green">3d_reconstruction</a>
+                    <a href="/2019/09/12/docker-usage/" class="b-link-green">Docker Usage</a>
                 </p>
             </div>
         </div>
@@ -585,7 +655,7 @@
         repo: 'zongdaoming.github.io',
         owner: 'zongdaoming',
         admin: "zongdaoming",
-        id: '2019-09-12T02-49-00',
+        id: '2019-09-12T04-29-08',
         distractionFreeMode: false  // Facebook-like distraction free mode
     });
 
@@ -610,80 +680,25 @@
             <div class="article-badge left-badge text-color">
                 <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/09/12/docker-usage/">
+                <a href="/2019/09/15/multimodal-neural-translation-tutorial2/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/15.jpg" class="responsive-img" alt="Docker Usage">
+                        <img src="/medias/featureimages/13.jpg" class="responsive-img" alt="multimodal neural translation series 2">
                         
-                        <span class="card-title">Docker Usage</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary">Docker从入门到放弃
-
-作者: 宗道明
-
-请参阅Tensorflow官方文档和Docker官方文档获得详细信息。
-启动 TensorFlow Docker 容器要启动配置 TensorFlow 的容器，请使用以下命令格式：
-docker</div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-12
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fa fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/tools/" class="post-category" target="_blank">
-                                    tools
-                                </a>
-                            
-                            
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/tools/" target="_blank">
-                        <span class="chip bg-color">tools</span>
-                    </a>
-                    
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2019/09/09/multimodal-neural-translation/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/14.jpg" class="responsive-img" alt="multimodal neural translation tutorial">
-                        
-                        <span class="card-title">multimodal neural translation tutorial</span>
+                        <span class="card-title">multimodal neural translation series 2</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary">
-
-聊天机器人的实现
-作者: Matthew Inkawhich
-译者: 宗道明
+作者: [Thang Luong, Eugene Brevdo, Rui Zhao] (Google Research Blogpost, Github)
 
 
-
-上个学期仔细看了一篇神经对话模型的Pytorch实现，踩了一些小坑，现记录如下。通过本教程，你可以快速实现一个聊天机器人并掌握Pytorch的一些入门技</div>
+译者: 宗道明If make use of this codebase for</div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-09
-                            </span>
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-15
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-bookmark fa-fw icon-category"></i>
@@ -703,8 +718,57 @@ docker</div>
                         <span class="chip bg-color">ML</span>
                     </a>
                     
-                    <a href="/tags/multimodal-leanring/" target="_blank">
-                        <span class="chip bg-color">multimodal leanring</span>
+                    <a href="/tags/multimodal-translation/" target="_blank">
+                        <span class="chip bg-color">multimodal translation</span>
+                    </a>
+                    
+                </div>
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/09/12/3d-reconstruction/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="3d_reconstruction">
+                        
+                        <span class="card-title">3d_reconstruction</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary"></div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-09-12
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-bookmark fa-fw icon-category"></i>
+                            
+                            <a href="/categories/Computer-Vision/" class="post-category" target="_blank">
+                                    Computer Vision
+                                </a>
+                            
+                            
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="card-action article-tags">
+                    
+                    <a href="/tags/Machine-Learning/" target="_blank">
+                        <span class="chip bg-color">Machine Learning</span>
+                    </a>
+                    
+                    <a href="/tags/Computer-Vision/" target="_blank">
+                        <span class="chip bg-color">Computer Vision</span>
                     </a>
                     
                 </div>

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://zongdaoming.github.io/"/>
-  <updated>2019-09-21T03:12:53.954Z</updated>
+  <updated>2019-09-21T03:26:05.376Z</updated>
   <id>https://zongdaoming.github.io/</id>
   
   <author>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>multimodal-neural-translation  3</title>
-    <link href="https://zongdaoming.github.io/2019/09/19/machine-learning-base/multimodal-neural-translation3/"/>
-    <id>https://zongdaoming.github.io/2019/09/19/machine-learning-base/multimodal-neural-translation3/</id>
+    <link href="https://zongdaoming.github.io/2019/09/19/multimodal-neural-translation3/"/>
+    <id>https://zongdaoming.github.io/2019/09/19/multimodal-neural-translation3/</id>
     <published>2019-09-19T14:32:23.000Z</published>
-    <updated>2019-09-21T03:12:53.954Z</updated>
+    <updated>2019-09-21T03:26:05.376Z</updated>
     
     <summary type="html">
     
@@ -47,8 +47,8 @@
   
   <entry>
     <title>dataset pipeline</title>
-    <link href="https://zongdaoming.github.io/2019/09/18/machine-learning-base/dataset-pipeline/"/>
-    <id>https://zongdaoming.github.io/2019/09/18/machine-learning-base/dataset-pipeline/</id>
+    <link href="https://zongdaoming.github.io/2019/09/18/dataset-pipeline/"/>
+    <id>https://zongdaoming.github.io/2019/09/18/dataset-pipeline/</id>
     <published>2019-09-18T06:41:23.000Z</published>
     <updated>2019-09-18T15:18:45.502Z</updated>
     
@@ -76,8 +76,8 @@
   
   <entry>
     <title>Tensorflow指南(1)</title>
-    <link href="https://zongdaoming.github.io/2019/09/17/machine-learning-base/multi-gpu-tensorflow/"/>
-    <id>https://zongdaoming.github.io/2019/09/17/machine-learning-base/multi-gpu-tensorflow/</id>
+    <link href="https://zongdaoming.github.io/2019/09/17/multi-gpu-tensorflow/"/>
+    <id>https://zongdaoming.github.io/2019/09/17/multi-gpu-tensorflow/</id>
     <published>2019-09-17T07:25:30.000Z</published>
     <updated>2019-09-17T14:21:35.434Z</updated>
     
@@ -104,8 +104,8 @@
   
   <entry>
     <title>multimodal neural translation series 2</title>
-    <link href="https://zongdaoming.github.io/2019/09/15/machine-learning-base/multimodal-neural-translation-tutorial2/"/>
-    <id>https://zongdaoming.github.io/2019/09/15/machine-learning-base/multimodal-neural-translation-tutorial2/</id>
+    <link href="https://zongdaoming.github.io/2019/09/15/multimodal-neural-translation-tutorial2/"/>
+    <id>https://zongdaoming.github.io/2019/09/15/multimodal-neural-translation-tutorial2/</id>
     <published>2019-09-15T05:26:41.000Z</published>
     <updated>2019-09-21T03:09:24.511Z</updated>
     
@@ -133,8 +133,8 @@
   
   <entry>
     <title>Docker Usage</title>
-    <link href="https://zongdaoming.github.io/2019/09/12/tools/docker-usage/"/>
-    <id>https://zongdaoming.github.io/2019/09/12/tools/docker-usage/</id>
+    <link href="https://zongdaoming.github.io/2019/09/12/docker-usage/"/>
+    <id>https://zongdaoming.github.io/2019/09/12/docker-usage/</id>
     <published>2019-09-11T20:29:08.000Z</published>
     <updated>2019-09-12T07:37:55.952Z</updated>
     
@@ -181,8 +181,8 @@
   
   <entry>
     <title>multimodal neural translation tutorial</title>
-    <link href="https://zongdaoming.github.io/2019/09/09/machine-learning-base/multimodal-neural-translation/"/>
-    <id>https://zongdaoming.github.io/2019/09/09/machine-learning-base/multimodal-neural-translation/</id>
+    <link href="https://zongdaoming.github.io/2019/09/09/multimodal-neural-translation/"/>
+    <id>https://zongdaoming.github.io/2019/09/09/multimodal-neural-translation/</id>
     <published>2019-09-09T07:23:19.000Z</published>
     <updated>2019-09-16T12:44:57.557Z</updated>
     
@@ -215,8 +215,8 @@
   
   <entry>
     <title>How to write your first SCI paper?</title>
-    <link href="https://zongdaoming.github.io/2019/09/07/paper-writing/how-to-writing-paper/"/>
-    <id>https://zongdaoming.github.io/2019/09/07/paper-writing/how-to-writing-paper/</id>
+    <link href="https://zongdaoming.github.io/2019/09/07/how-to-writing-paper/"/>
+    <id>https://zongdaoming.github.io/2019/09/07/how-to-writing-paper/</id>
     <published>2019-09-07T03:26:10.000Z</published>
     <updated>2019-09-09T11:28:19.562Z</updated>
     
@@ -265,8 +265,8 @@
   
   <entry>
     <title>Conjugate</title>
-    <link href="https://zongdaoming.github.io/2019/06/20/machine-learning-base/conjugate/"/>
-    <id>https://zongdaoming.github.io/2019/06/20/machine-learning-base/conjugate/</id>
+    <link href="https://zongdaoming.github.io/2019/06/20/conjugate/"/>
+    <id>https://zongdaoming.github.io/2019/06/20/conjugate/</id>
     <published>2019-06-20T03:36:35.000Z</published>
     <updated>2019-09-07T03:16:23.131Z</updated>
     
@@ -294,8 +294,8 @@
   
   <entry>
     <title>Hexo博客主题之hexo-theme-matery的介绍</title>
-    <link href="https://zongdaoming.github.io/2018/09/28/front-end-development/hexo-bo-ke-zhu-ti-zhi-hexo-theme-matery-de-jie-shao/"/>
-    <id>https://zongdaoming.github.io/2018/09/28/front-end-development/hexo-bo-ke-zhu-ti-zhi-hexo-theme-matery-de-jie-shao/</id>
+    <link href="https://zongdaoming.github.io/2018/09/28/hexo-bo-ke-zhu-ti-zhi-hexo-theme-matery-de-jie-shao/"/>
+    <id>https://zongdaoming.github.io/2018/09/28/hexo-bo-ke-zhu-ti-zhi-hexo-theme-matery-de-jie-shao/</id>
     <published>2018-09-28T05:34:00.000Z</published>
     <updated>2019-06-21T04:01:02.579Z</updated>
     
