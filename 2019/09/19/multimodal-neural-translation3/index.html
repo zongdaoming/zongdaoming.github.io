@@ -435,7 +435,7 @@
 </li>
 <li><p>在获得这两种词语的特征表示（语言表示+局部视觉表示）后，便可以进行两种语言之间的词语翻译。将两个词语的语言特征向量的余弦相似度和局部视觉特征向量的余弦相似度之和作为这两个词语是否符合同一语义的分值，再以词汇表中与待翻译词匹配分值最高的词语作为翻译后的单词。</p>
 <center>
-<img src="multimodal-neural-translation3/comparsion.png">
+<img src="/images/comparsion.png">
 </center>
 实验证明这两种特征的结合，可以有效地彼此互补，从而明显地提升词语翻译的准确度。
 
@@ -447,19 +447,19 @@
 <h2 id="第一种降噪方法"><a href="#第一种降噪方法" class="headerlink" title="第一种降噪方法"></a>第一种降噪方法</h2><p>第一种是对有噪声的句子根据其噪声程度赋予不同的权重，使得有噪声的数据对翻译模型训练优化的影响较小，优质的训练数据对翻译模型优化的影响更大。主要做法是计算源语言和目标语言句子的最小EMD（Earth Mover’s Distance）距离。其中，词与词之间的距离用多语言图片描述生成模型中计算得到的词语嵌入特征向量的余弦距离来表示。由于这一预训练好的图片描述生成模型针对不同的语言共享图片编码器和描述生成器，因此不同语言的词语会被嵌入到同一个隐含空间中。在这一空间中，语义相近的词语的特征向量更近。根据句子层级和词语层级的EMD距离，便可以对损失函数中每个训练样例及每个样例中的词语的贡献度加以权重，从而减轻噪声对NMT模型性能的影响。</p>
 <h2 id="第二种降噪方法"><a href="#第二种降噪方法" class="headerlink" title="第二种降噪方法"></a>第二种降噪方法</h2><p>第二种降噪方法是让NMT模型对“源语言的句子”进行重建。这里的“源语言的句子”实际是经过噪声化的句子。我们对句子随机进行词语调位、词语增添，词语丢弃等操作，训练NMT模型重建出原来完好的句子。这一自我编码解码的方式可以提高模型的鲁棒性。</p>
 <p>最终的实验结果表明，通过以上两种降噪方式，可以很大程度上提高无监督机器翻译的质量。</p>
-<p><img src="multimodal-neural-translation3/multilingual.png" alt="img"></p>
+<p><img src="/images/multilingual.png" alt="img"></p>
 <h1 id="Language-Pivoted-zero-source-caption"><a href="#Language-Pivoted-zero-source-caption" class="headerlink" title="Language Pivoted zero-source caption"></a>Language Pivoted zero-source caption</h1><p>既然图片等视觉信息可以对无监督的机器翻译任务提供很大帮助，那么反过来，机器翻译任务是否可以为计算机视觉相关任务，如图片描述自动生成带来帮助呢？答案是肯定的。</p>
 <p>图片描述生成任务是对于给定的一张图片，自动生成描述图片内容的自然语言描述。这一任务从提出至今已有较长的研究历史，然而大部分工作都只专注于英文图片描述生成模型的研究。为了满足世界各地人们的需要，尤其是非母语为英语的人们，训练其他语种的图片描述生成模型十分必要。然而，由于用来训练图片描述生成模型的训练数据全部需要人工标注，为每一种语言，尤其是小语种标注大量的（图片，内容描述）数据几乎是不可能的。因此，我们希望可以利用已有的图片描述数据集来训练任一语言的图片描述生成模型，这也被称作跨语言图片描述生成。那么，如何在只了解一种语言的图片描述知识的情况下，自动为图片生成另一种语言的内容描述呢？或许机器翻译可以帮这个忙。</p>
 <p>2018年，Jiuxiang Gu等人提出先在数据上训练这种语言的图片描述生成模型，随后通过机器翻译模型将所生成的描述翻译到目标语言。然而，由于机器翻译模型并不是完美的，在翻译的过程中，种种翻译错误严重影响了最终生成的描述质量。我们在Unpaired Cross-lingual Image Caption Generation with Self-Supervised Rewards这篇工作中总结了两种翻译错误，分别是语言表达不通顺和语义翻译不正确。前者会导致翻译得到的目标语言图片描述存在语法错误，后者则可能出现句子所描述的内容与图片不符的情况。针对这两种错误，我们设计了两种奖励函数来解决问题。下面，我们来详细了解这篇文章。</p>
 <h3 id="Unpaired-Cross-lingual-Image-Caption-Generation-with-Self-Supervised-Rewards"><a href="#Unpaired-Cross-lingual-Image-Caption-Generation-with-Self-Supervised-Rewards" class="headerlink" title="Unpaired Cross-lingual Image Caption Generation with Self-Supervised Rewards"></a>Unpaired Cross-lingual Image Caption Generation with Self-Supervised Rewards</h3><p>这篇文章利用机器翻译对跨语言的图片描述生成任务进行了探索。讨论如何在某种语言的图片描述数据匮乏的情况下，训练该语言的图片描述生成模型。这对于除英语外的其他语种的图片描述生成模型的训练提供了思路。</p>
-<p>我们以语言作为支点，使用资源充沛的英文数据来训练其他语言的图片描述生成模型。首先，通过机器翻译将英文的训练数据翻译到目标语言，随后以（图片，翻译得到的目标语言内容描述）作为训练数据来训练目标语言的图片描述生成模型。由于机器翻译模型并不完美，种种翻译错误使得这样的训练数据中存在很多噪声。我们分析总结了两种错误，分别是语言表达不通顺和语义翻译不正确。<br><img src="multimodal-neural-translation3/image-pivot.png" alt="lauage-pivot"></p>
-<h2 id="Motivation-1"><a href="#Motivation-1" class="headerlink" title="Motivation"></a>Motivation</h2><p>生成不同语言的图像描述对于满足全球用户的需求是至关重要的。然而，为每一种目标语言收集大规模的成对图像标题数据集是非常昂贵的，这对于训练下降图像描述模型至关重要。以往的工作都是通过一个主语言，借助主语言中的成对图像标题数据和pivot-to-target机器翻译模型，来解决跨语言图像标题的非成对问题。然而，这种以语言为中心的翻译方法存在着由中心到目标(pivot-to-target)的翻译带来的不准确性，包括不流畅性和视觉无关性错误。在本文中，我们提出在强化学习框架中生成具有自监督奖励的跨语言图像描述，以减少这两类的错误。我们利用目标语单语语料库的自监督来提供流畅性奖励，并提出了一个多层次的视觉语义匹配模型来提供句子级和概念级的视觉关联奖励。<br><img src="multimodal-neural-translation3/ssr_model.png" alt="rl"></p>
+<p>我们以语言作为支点，使用资源充沛的英文数据来训练其他语言的图片描述生成模型。首先，通过机器翻译将英文的训练数据翻译到目标语言，随后以（图片，翻译得到的目标语言内容描述）作为训练数据来训练目标语言的图片描述生成模型。由于机器翻译模型并不完美，种种翻译错误使得这样的训练数据中存在很多噪声。我们分析总结了两种错误，分别是语言表达不通顺和语义翻译不正确。<br><img src="/images/image-pivot.png" alt="lauage-pivot"></p>
+<h2 id="Motivation-1"><a href="#Motivation-1" class="headerlink" title="Motivation"></a>Motivation</h2><p>生成不同语言的图像描述对于满足全球用户的需求是至关重要的。然而，为每一种目标语言收集大规模的成对图像标题数据集是非常昂贵的，这对于训练下降图像描述模型至关重要。以往的工作都是通过一个主语言，借助主语言中的成对图像标题数据和pivot-to-target机器翻译模型，来解决跨语言图像标题的非成对问题。然而，这种以语言为中心的翻译方法存在着由中心到目标(pivot-to-target)的翻译带来的不准确性，包括不流畅性和视觉无关性错误。在本文中，我们提出在强化学习框架中生成具有自监督奖励的跨语言图像描述，以减少这两类的错误。我们利用目标语单语语料库的自监督来提供流畅性奖励，并提出了一个多层次的视觉语义匹配模型来提供句子级和概念级的视觉关联奖励。<br><img src="/images/ssr_model.png" alt="rl"></p>
 <h1 id="Multimodal-Enhanced-Translation"><a href="#Multimodal-Enhanced-Translation" class="headerlink" title="Multimodal Enhanced Translation"></a>Multimodal Enhanced Translation</h1><p>以上两个任务证明了跨模态信息对于数据匮乏情况下的无监督学习任务可以给予更多的指导信息，对无监督模型的训练效果有很大提升。那么，在数据充裕的情况下，如存在大量成对数据的机器翻译，跨模态信息的加入是否还能进一步提升模型质量呢？以下两篇论文就对这一问题进行了探索。</p>
 <h2 id="VATEX-A-Large-Scale-High-Quality-Multilingual-Dataset-for-Video-and-Language-Research"><a href="#VATEX-A-Large-Scale-High-Quality-Multilingual-Dataset-for-Video-and-Language-Research" class="headerlink" title="VATEX: A Large-Scale, High-Quality Multilingual Dataset for Video-and-Language Research"></a>VATEX: A Large-Scale, High-Quality Multilingual Dataset for Video-and-Language Research</h2><p>这篇论文通过收集并标注视频和中英文的视频内容描述数据，证明了在存在成对翻译数据的情况下，引入跨模态信息（这里是视频），会进一步提升机器翻译模型的质量。其中，跨模态信息的加入主要从以下两个方面对机器翻译带来更多增益。</p>
 <ul>
 <li><p>消除歧义。我们都知道“一词多义”，在句子上下文信息不充裕的情况下，我们可能无法确定句子中某些词语的含义，自然更不能准确翻译到另一种语言。在这种情况下，视频信息便可以帮助消除语言上的歧义。</p>
 <center>
-<img src="multimodal-neural-translation3/vatex.png">
+<img src="/images/vatex.png">
 </center>
 </li>
 <li><p>减小噪声。 在训练数据存在少量噪声时，跨模态信息的加入也会提供更多信息，增强模型的鲁棒性。</p>
